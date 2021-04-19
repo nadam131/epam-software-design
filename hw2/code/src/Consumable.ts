@@ -10,17 +10,15 @@ export class Consumable extends Item {
   }
 
   eat() {
-    this.consumed = true;
+    this.setConsumed();
     if (this.spoiled) {
       return `You eat the ${this.name}. You feel sick.`;
     }
 
     return `You eat the ${this.name}.`;
   }
+
+  setConsumed() {
+    this.consumed = true;
+  }
 }
-
-const CONS = new Consumable("bread", 200, 10);
-
-console.log(CONS.use());
-console.log(CONS.use());
-console.log(CONS.use());
