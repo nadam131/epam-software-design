@@ -1,37 +1,32 @@
-export class Point {
-  x: number;
-  y: number;
+const fraction = 3;
 
-  constructor(x?: number, y?: number) {
-    if (typeof x === "number" && typeof y === "number") {
-      this.x = x;
-      this.y = y;
-    } else {
-      this.x = 0;
-      this.y = 0;
-    }
-  }
+export class Point {
+  constructor();
+  constructor(x: number, y: number);
+
+  constructor(readonly x = 0, readonly y = 0) {}
 
   public toString() {
     return `(${this.x}, ${this.y})`;
   }
 
-  public distance(point);
-  public distance(x, y?) {
-    let pointX = +(x - this.x).toFixed();
-    let pointY = +(y - this.y).toFixed();
+  private getDistance(a: Point, b: Point) {
+    const x = +(a.x - b.x).toFixed(fraction);
+    const y = +(a.y - b.y).toFixed(fraction);
 
-    if (!y) {
-      const point = new Point(x);
-      pointX = +(this.x - point.x).toFixed();
-      pointY = +(this.y - point.y).toFixed();
+    return Math.sqrt(+(x * x + y * y).toFixed(fraction));
+  }
+
+  public distance(): number;
+  public distance(other: Point): number;
+  public distance(x: number, y: number): number;
+  public distance(pointOrX?: number | Point, y?: number): number {
+    if (!pointOrX) {
+      return this.getDistance(this, new Point());
+    } else if (pointOrX instanceof Point) {
+      return this.getDistance(this, pointOrX);
+    } else if (pointOrX && y) {
+      return this.getDistance(this, new Point(pointOrX, y));
     }
-
-    if (!x && !y) {
-      pointX = +(this.x - 0).toFixed();
-      pointY = +(this.y - 0).toFixed();
-    }
-
-    return Number(Math.hypot(pointX, pointY).toFixed());
   }
 }

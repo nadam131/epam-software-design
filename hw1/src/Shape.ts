@@ -1,34 +1,33 @@
 import { Point } from "./Point";
 
 export abstract class Shape {
-  private point: Point = new Point();
-  protected color: string;
-  protected filled: boolean;
-  protected points: Point[];
-
-  constructor(points: Point[], color?: string, filled?: boolean) {
+  constructor(points: Point[]);
+  constructor(points: Point[], color: string, filled: boolean);
+  constructor(
+    public points: Point[],
+    public color = "green",
+    public filled = true
+  ) {
     if (points.length < 3) {
-      throw new Error("Ooops. One more point please");
+      throw new Error("Number of Points should be 3 at least");
     }
-
-    this.points = points;
-    this.color = color || "green";
-    this.filled = typeof filled === "boolean" ? filled : true;
   }
 
-  toString() {
-    const filledLabel = this.filled ? "filled" : "not filled";
-    const pointsStringArray = this.points
-      .map((p) => `(${p.x}, ${p.y})`)
-      .join(", ");
+  getPerimeter(): number {
+    return this.points.reduce((perimeter, point, index, points) => {
+      if (index < points.length) {
+        return perimeter + point.distance(points[index + 1]);
+      }
 
-    return `A Shape with color of ${this.color} and ${filledLabel}. Points: ${pointsStringArray}.`;
+      return perimeter;
+    }, 0);
   }
 
-  getPerimeter() {
-    const array = this.points.map((p) => {
-      return p.x * p.y;
-    });
-    return array.reduce((a, b) => a + b, 0);
+  toString(): string {
+    const points = this.points.map((point) => point.toString()).join(", ");
+
+    return `A Shape with color of ${this.color} and ${
+      this.filled ? "filled" : "not filled"
+    }. Points: ${points}.`;
   }
 }

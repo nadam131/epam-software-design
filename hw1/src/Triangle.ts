@@ -1,59 +1,39 @@
-import { Point } from "./Point";
 import { Shape } from "./Shape";
+import { Point } from "./Point";
+
+const EPSILON = 0.05;
 
 export class Triangle extends Shape {
-  constructor(point1: Point, point2: Point, point3: Point) {
-    super([point1, point2, point3]);
+  constructor(a: Point, b: Point, c: Point);
+  constructor(a: Point, b: Point, c: Point, color: string);
+  constructor(a: Point, b: Point, c: Point, color: string, filled: boolean);
+  constructor(public a: Point, public b: Point, public c: Point) {
+    super([a, b, c]);
   }
 
-  toString() {
-    const string = `Triangle[v1=${this.points[0]},v2=${this.points[1]},v3=${this.points[2]}]`;
-    return string;
-  }
+  getType(): string {
+    const ab = this.a.distance(this.b);
+    const bc = this.b.distance(this.c);
+    const ca = this.c.distance(this.a);
 
-  getType() {
-    var equilateral = function (triangle) {
-      console.log(triangle, "triangle");
-      const { s1, s2, s3 } = triangle;
-      if (s1 === s2 && s1 === s3) {
-        return true;
-      }
-      return false;
-    };
+    const ab_bc_eq = ab - bc < EPSILON;
+    const bc_ca_eq = bc - ca < EPSILON;
+    const ca_ab_eq = ca - ab < EPSILON;
 
-    var isosceles = function (triangle) {
-      const { s1, s2, s3 } = triangle;
-
-      if (s1 === s2 || s1 === s3 || s2 === s3) {
-        return true;
-      }
-      return false;
-    };
-
-    var scalene = function (triangle) {
-      const { s1, s2, s3 } = triangle;
-
-      if (s1 === s2) {
-        return false;
-      } else if (s1 === s3) {
-        return false;
-      } else if (s2 === s3) {
-        return false;
-      } else {
-        return true;
-      }
-    };
-
-    if (equilateral(this.points)) {
+    if (ab_bc_eq && bc_ca_eq && ca_ab_eq) {
       return "equilateral triangle";
-    }
-
-    if (isosceles(this.points)) {
+    } else if (
+      (ab_bc_eq && bc_ca_eq) ||
+      (bc_ca_eq && ca_ab_eq) ||
+      (ca_ab_eq && ab_bc_eq)
+    ) {
       return "isosceles triangle";
-    }
-
-    if (scalene(this.points)) {
+    } else {
       return "scalene triangle";
     }
+  }
+
+  toString(): string {
+    return `Triangle[v1=${this.a.toString()},v2=${this.b.toString()},v3=${this.c.toString()}]`;
   }
 }
